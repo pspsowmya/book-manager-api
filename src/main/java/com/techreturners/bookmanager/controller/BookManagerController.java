@@ -48,6 +48,5 @@ public class BookManagerController {
     public ResponseEntity<Book> deleteBookById(@PathVariable("bookId") Long bookId) {
         bookManagerService.deleteBookById(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 }
