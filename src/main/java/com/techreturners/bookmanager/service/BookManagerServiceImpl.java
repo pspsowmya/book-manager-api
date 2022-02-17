@@ -28,7 +28,7 @@ public class BookManagerServiceImpl implements BookManagerService {
 
     @Override
     public Book getBookById(Long id) {
-        return bookManagerRepository.findById(id).get();
+        return bookManagerRepository.findById(id).isPresent()?bookManagerRepository.findById(id).get():null;
     }
 
     //User Story 4 - Update Book By Id Solution

@@ -113,7 +113,7 @@ public class BookManagerControllerTests {
     @Test
     public void testDeleteMappingDeleteABook() throws Exception{
         //Add a book for testing delete
-        Book book = new Book(4L, "Book Four", "This is the description for Book Four", "Person Four", Genre.Fantasy);
+        Book book = new Book(4L, "Fabulous Four", "This is the description for Book Four", "Person Four", Genre.Fantasy);
 
         when(mockBookManagerServiceImpl.getBookById(book.getId())).thenReturn(book);
 
