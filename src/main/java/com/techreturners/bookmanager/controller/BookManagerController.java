@@ -21,12 +21,7 @@ public class BookManagerController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookManagerService.getAllBooks();
-        //Return an exception message when there is no data present
-        if (books.isEmpty()) {
-            CustomException exception = new CustomException();
-            exception.setMessage("No books present in the database");
-            return new ResponseEntity(exception, HttpStatus.NOT_FOUND);
-        }
+
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
