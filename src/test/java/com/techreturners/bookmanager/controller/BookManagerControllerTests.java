@@ -3,6 +3,7 @@ package com.techreturners.bookmanager.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techreturners.bookmanager.model.Book;
 import com.techreturners.bookmanager.model.Genre;
+import com.techreturners.bookmanager.service.BookManagerService;
 import com.techreturners.bookmanager.service.BookManagerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class BookManagerControllerTests {
     private ObjectMapper mapper;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         mockMvcController = MockMvcBuilders.standaloneSetup(bookManagerController).build();
         mapper = new ObjectMapper();
     }
@@ -54,14 +55,14 @@ public class BookManagerControllerTests {
         when(mockBookManagerServiceImpl.getAllBooks()).thenReturn(books);
 
         this.mockMvcController.perform(
-            MockMvcRequestBuilders.get("/api/v1/book/"))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("Book One"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Book Two"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(3))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[2].title").value("Book Three"));
+                        MockMvcRequestBuilders.get("/api/v1/book/"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("Book One"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Book Two"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].title").value("Book Three"));
     }
 
     @Test
@@ -72,10 +73,10 @@ public class BookManagerControllerTests {
         when(mockBookManagerServiceImpl.getBookById(book.getId())).thenReturn(book);
 
         this.mockMvcController.perform(
-            MockMvcRequestBuilders.get("/api/v1/book/" + book.getId()))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Book Four"));
+                        MockMvcRequestBuilders.get("/api/v1/book/" + book.getId()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Book Four"));
     }
 
     @Test
@@ -86,9 +87,9 @@ public class BookManagerControllerTests {
         when(mockBookManagerServiceImpl.insertBook(book)).thenReturn(book);
 
         this.mockMvcController.perform(
-                MockMvcRequestBuilders.post("/api/v1/book/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(book)))
+                        MockMvcRequestBuilders.post("/api/v1/book/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(book)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         verify(mockBookManagerServiceImpl, times(1)).insertBook(book);
@@ -98,12 +99,17 @@ public class BookManagerControllerTests {
     @Test
     public void testPutMappingUpdateABook() throws Exception {
 
-        Book book = new Book(4L, "Fabulous Four", "This is the description for the Fabulous Four", "Person Four", Genre.Fantasy);
+        Book book = new Book(4L, "Book Four", "This is the description for Book Four", "Person Four", Genre.Fantasy);
+
+        when(mockBookManagerServiceImpl.getBookById(book.getId())).thenReturn(book);
+
+        book.setTitle("Fabulous Four");
+        book.setDescription("This is the description for the Fabulous Four");
 
         this.mockMvcController.perform(
-                MockMvcRequestBuilders.put("/api/v1/book/" + book.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(book)))
+                        MockMvcRequestBuilders.put("/api/v1/book/" + book.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(book)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(mockBookManagerServiceImpl, times(1)).updateBookById(book.getId(), book);
@@ -111,15 +117,15 @@ public class BookManagerControllerTests {
 
 
     @Test
-    public void testDeleteMappingDeleteABook() throws Exception{
+    public void testDeleteMappingDeleteABook() throws Exception {
         //Add a book for testing delete
-        Book book = new Book(4L, "Fabulous Four", "This is the description for Book Four", "Person Four", Genre.Fantasy);
+        Book book = new Book(1L, "Book One", "This is the description for Book One", "Person One", Genre.Education);
 
         when(mockBookManagerServiceImpl.getBookById(book.getId())).thenReturn(book);
 
         //delete the book
         this.mockMvcController.perform(
-                        MockMvcRequestBuilders.delete("/api/v1/book/"+book.getId())
+                        MockMvcRequestBuilders.delete("/api/v1/book/" + book.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(book)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
