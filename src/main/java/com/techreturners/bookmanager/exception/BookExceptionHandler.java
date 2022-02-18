@@ -22,4 +22,15 @@ public class BookExceptionHandler {
         return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {DuplicateIDException.class})
+    public ResponseEntity<Object> handleDuplicateIDException(GetEmptyException e) {
+        CustomException getException = new CustomException(
+                ZonedDateTime.now(),
+                HttpStatus.BAD_REQUEST,
+                e.getMessage()
+        );
+
+        return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
+    }
+
 }

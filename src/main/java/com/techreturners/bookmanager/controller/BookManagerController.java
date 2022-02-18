@@ -1,6 +1,7 @@
 package com.techreturners.bookmanager.controller;
 
 import com.techreturners.bookmanager.exception.CustomException;
+import com.techreturners.bookmanager.exception.DuplicateIDException;
 import com.techreturners.bookmanager.exception.GetEmptyException;
 import com.techreturners.bookmanager.model.Book;
 import com.techreturners.bookmanager.service.BookManagerService;
@@ -22,6 +23,9 @@ public class BookManagerController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookManagerService.getAllBooks();
+        if (books.isEmpty()) {
+            throw new GetEmptyException("No books present in the database");
+        }
 
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
@@ -38,11 +42,10 @@ public class BookManagerController {
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-//        Book existingBook = bookManagerService.getBookById(book.getId());
-//
-//        if (existingBook != null) {
-//            throw new GetEmptyException("There is already a book with the given ID.. Please try with another ID");
-//        }
+        Book existingBook = bookManagerService.getBookById(book.getId());
+        if (existingBook != null) {
+            throw new DuplicateIDException("There is already a book with the given ID.. Please try with another ID");
+        }
 
         Book newBook = bookManagerService.insertBook(book);
         HttpHeaders httpHeaders = new HttpHeaders();
