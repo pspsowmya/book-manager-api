@@ -71,7 +71,7 @@ public class BookManagerController {
         Book book = bookManagerService.getBookById(bookId);
         //Return exception message when user is trying to delete a book that does not exist
         if (book == null) {
-            throw new GetEmptyException("Book not found. Please try to update a book that exists.");
+            throw new GetEmptyException("Book not found. Please try to delete a book that exists.");
         }
         bookManagerService.deleteBookById(bookId);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -23,7 +23,7 @@ public class BookExceptionHandler {
     }
 
     @ExceptionHandler(value = {DuplicateIDException.class})
-    public ResponseEntity<Object> handleDuplicateIDException(GetEmptyException e) {
+    public ResponseEntity<Object> handleDuplicateIDException(DuplicateIDException e) {
         CustomException getException = new CustomException(
                 ZonedDateTime.now(),
                 HttpStatus.BAD_REQUEST,
