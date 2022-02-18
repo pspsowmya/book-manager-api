@@ -1,6 +1,8 @@
 package com.techreturners.bookmanager.controller;
 
 import com.techreturners.bookmanager.exception.CustomException;
+import com.techreturners.bookmanager.exception.DuplicateIDException;
+import com.techreturners.bookmanager.exception.GetEmptyException;
 import com.techreturners.bookmanager.model.Book;
 import com.techreturners.bookmanager.service.BookManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,10 @@ public class BookManagerController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookManagerService.getAllBooks();
-        //Return an exception message when there is no data present
         if (books.isEmpty()) {
-            CustomException exception = new CustomException();
-            exception.setMessage("No books present in the database");
-            return new ResponseEntity(exception, HttpStatus.NOT_FOUND);
+            throw new GetEmptyException("No books present in the database");
         }
+
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
@@ -35,9 +35,7 @@ public class BookManagerController {
         Book book = bookManagerService.getBookById(bookId);
         //Return exception message when no book is present with given id
         if (book == null) {
-            CustomException exception = new CustomException();
-            exception.setMessage("No book found with given ID.. Please try with other ID");
-            return new ResponseEntity(exception, HttpStatus.NOT_FOUND);
+            throw new GetEmptyException("There is no book present with that ID");
         }
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
@@ -45,12 +43,10 @@ public class BookManagerController {
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
         Book existingBook = bookManagerService.getBookById(book.getId());
-        //Return exception message when user is trying to add a  book with an existing ID
         if (existingBook != null) {
-            CustomException exception = new CustomException();
-            exception.setMessage("There is already a book with the given ID.. Please try with another ID");
-            return new ResponseEntity(exception, HttpStatus.FOUND);
+            throw new DuplicateIDException("There is already a book with the given ID.. Please try with another ID");
         }
+
         Book newBook = bookManagerService.insertBook(book);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("book", "/api/v1/book/" + newBook.getId().toString());
@@ -63,9 +59,7 @@ public class BookManagerController {
         book = bookManagerService.getBookById(bookId);
         //Return exception message when user is trying to update a book that does not exist
         if (book == null) {
-            CustomException exception = new CustomException();
-            exception.setMessage("Book not found. Please try to update a book that exists");
-            return new ResponseEntity(exception, HttpStatus.NOT_FOUND);
+            throw new GetEmptyException("Book not found. Please try to update a book that exists.");
         }
         bookManagerService.updateBookById(bookId, book);
         return new ResponseEntity<>(bookManagerService.getBookById(bookId), HttpStatus.OK);
@@ -77,9 +71,7 @@ public class BookManagerController {
         Book book = bookManagerService.getBookById(bookId);
         //Return exception message when user is trying to delete a book that does not exist
         if (book == null) {
-            CustomException exception = new CustomException();
-            exception.setMessage("Book not found. Please try to delete a book that exists");
-            return new ResponseEntity(exception, HttpStatus.NOT_FOUND);
+            throw new GetEmptyException("Book not found. Please try to delete a book that exists.");
         }
         bookManagerService.deleteBookById(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
