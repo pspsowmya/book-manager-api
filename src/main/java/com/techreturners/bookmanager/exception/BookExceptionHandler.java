@@ -30,7 +30,7 @@ public class BookExceptionHandler {
                 e.getMessage()
         );
 
-        return new ResponseEntity<>(getException, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(getException, HttpStatus.BAD_REQUEST);
     }
 
 }
