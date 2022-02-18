@@ -15,7 +15,6 @@ public class BookExceptionHandler {
     public ResponseEntity<Object> handleGetEmptyException(GetEmptyException e) {
         CustomException getException = new CustomException(
                 ZonedDateTime.now(),
-                e,
                 HttpStatus.NOT_FOUND,
                 e.getMessage()
         );
